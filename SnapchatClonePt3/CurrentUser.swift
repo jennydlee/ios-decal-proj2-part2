@@ -42,13 +42,11 @@ class CurrentUser {
                     }
                 }
             }
-            completion(postArray)
-            
-            
+
         }) { (error) in
             print(error.localizedDescription)
-            completion([])
         }
+        completion(postArray)
     }
     
     /*

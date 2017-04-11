@@ -59,8 +59,17 @@ func addPost(postImage: UIImage, thread: String, username: String) {
     let dbRef = FIRDatabase.database().reference()
     let data = UIImageJPEGRepresentation(postImage, 1.0)! 
     let path = "\(firStorageImagesPath)/\(UUID().uuidString)"
+    let date = DateFormatter()
+    date.dateFormat = dateFormat
     
-    // YOUR CODE HERE
+    let dict = ["imagePath": path,
+                   "thread": thread,
+                   "username": username,
+                   "date": date.string(from: Date())]
+    dbRef.child(firPostsNode).childByAutoId().setValue(dict)
+    
+    store(data: data, toPath: path)
+    
 }
 
 /*
@@ -73,8 +82,11 @@ func addPost(postImage: UIImage, thread: String, username: String) {
 */
 func store(data: Data, toPath path: String) {
     let storageRef = FIRStorage.storage().reference()
-    
-    // YOUR CODE HERE
+    storageRef.child(path).put(data, metadata: nil) { (metadata, error) in
+        if let error = error {
+            print(error)
+        }
+    }
 }
 
 
@@ -98,6 +110,38 @@ func store(data: Data, toPath path: String) {
 func getPosts(user: CurrentUser, completion: @escaping ([Post]?) -> Void) {
     let dbRef = FIRDatabase.database().reference()
     var postArray: [Post] = []
+    dbRef.child(firPostsNode).observeSingleEvent(of: .value, with: {(snapshot) in
+        if(snapshot.exists()) {
+            let values = snapshot.value as? [String: AnyObject]
+            user.getReadPostIDs(completion: { (readPosts) in
+                for (key, val) in values! {
+                    var username = ""
+                    var imagePath = ""
+                    var thread = ""
+                    var date = ""
+                    let read = readPosts.contains(key)
+                    if let uservalue = val.value(forKey: "username") as? String {
+                        username = uservalue
+                    }
+                    if let pathvalue = val.value(forKey: "imagePath") as? String {
+                        imagePath = pathvalue
+                    }
+                    if let threadvalue = val.value(forKey: "thread") as? String {
+                        thread = threadvalue
+                    }
+                    if let datevalue = val.value(forKey: "date") as? String {
+                        date = datevalue
+                    }
+                    let newPost = Post(id: key, username: username, postImagePath: imagePath, thread: thread, dateString: date, read: read)
+                    postArray.append(newPost)
+                }
+                completion(postArray)
+            })
+        }
+        else {
+            completion(nil)
+        }
+    })
     
 }
 
