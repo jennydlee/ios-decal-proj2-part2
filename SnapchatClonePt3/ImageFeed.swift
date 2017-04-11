@@ -99,7 +99,6 @@ func getPosts(user: CurrentUser, completion: @escaping ([Post]?) -> Void) {
     let dbRef = FIRDatabase.database().reference()
     var postArray: [Post] = []
     
-    // YOUR CODE HERE
 }
 
 func getDataFromPath(path: String, completion: @escaping (Data?) -> Void) {
