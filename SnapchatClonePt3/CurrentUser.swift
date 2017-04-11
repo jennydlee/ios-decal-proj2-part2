@@ -35,19 +35,18 @@ class CurrentUser {
         var postArray: [String] = []
         dbRef.child(firUsersNode).child(id!).observeSingleEvent(of: .value, with: { (snapshot) in
             if(snapshot.exists()) {
-                let values = snapshot.value as? [String: AnyObject]
+                let values = snapshot.value as? [String: [String: String]]
                 if let readDict = values?[firReadPostsNode] {
                     for(_, postID) in readDict {
                         postArray.append(postID)
                     }
                 }
             }
-            completion(postArray)
 
         }) { (error) in
             print(error.localizedDescription)
-            completion([])
         }
+        completion(postArray)
     }
     
     /*
