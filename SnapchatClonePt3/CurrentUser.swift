@@ -33,7 +33,6 @@ class CurrentUser {
     */
     func getReadPostIDs(completion: @escaping ([String]) -> Void) {
         var postArray: [String] = []
-        // TODO
         dbRef.child(firUsersNode).child(id!).observeSingleEvent(of: .value, with: { (snapshot) in
             if(snapshot.exists()) {
                 let values = snapshot.value as? [String: AnyObject]
@@ -44,6 +43,7 @@ class CurrentUser {
                 }
             }
             completion(postArray)
+
         }) { (error) in
             print(error.localizedDescription)
             completion([])
@@ -58,7 +58,6 @@ class CurrentUser {
         Remember to be very careful about following the structure of the User node before writing any data!
     */
     func addNewReadPost(postID: String) {
-        // TODO
         dbRef.child(firUsersNode).child(id!).child(firReadPostsNode).childByAutoId().setValue(postID)
         readPostIDs?.append(postID)
     }
