@@ -132,18 +132,18 @@ func getPosts(user: CurrentUser, completion: @escaping ([Post]?) -> Void) {
                     if let datevalue = val.value(forKey: "date") as? String {
                         date = datevalue
                     }
-                    let newPost = Post(id: key, username: username!, postImagePath: imagePath!, thread: thread!, dateString: date!, read: read)
-                    postArray.append(newPost)
+                    let newpobj = Post(id: key,
+                                       username: username!,
+                                       postImagePath: imagePath!,
+                                       thread: thread!,
+                                       dateString: date!,
+                                       read: read)
+                    postArray.append(newpobj)
                 }
-                completion(postArray)
-//                print("completed")
             })
         }
-        else {
-            completion(nil)
-        }
+        completion(postArray)
     })
-    
 }
 
 func getDataFromPath(path: String, completion: @escaping (Data?) -> Void) {
