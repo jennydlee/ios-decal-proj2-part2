@@ -45,13 +45,7 @@ class PostsTableViewController: UIViewController, UITableViewDelegate, UITableVi
         postImageViewButton.addTarget(self, action: #selector(self.hidePostImage(sender:)), for: UIControlEvents.touchUpInside)
         
     }
-    /*
-        TODO:
-        Call the function to retrieve data for our tableview. 
-        (Hint): This should be pretty simple.
-    */
     override func viewWillAppear(_ animated: Bool) {
-        // YOUR CODE HERE
         updateData()
     }
 
@@ -59,18 +53,6 @@ class PostsTableViewController: UIViewController, UITableViewDelegate, UITableVi
         super.didReceiveMemoryWarning()
     }
     
-    /*
-        TODO:
-        Use the 'getPosts' function to retrieve all of the posts in the database. You'll need to pass in the currentUser property declared above so that we know if the posts have been read or not.
-        Using the posts variable that is returned, do the following:
-        - First clear the current dictionary of posts (in case we're reloading this feed again). You can do this by calling the 'clearThreads' function.
-        - For each post in the array:
-            - Add the post to the thread using the 'addPostToThread' function
-            - Using the postImagePath property of the post, retrieve the image data from the storage module (there is a function in ImageFeed.swift that does this for you already).
-            - Create a UIImage from the data and add a new element to the 'loadedImagesById' variable using the image and post ID. 
-        - After iterating through all the posts, reload the tableview.
-     
-    */
     func updateData() {
         getPosts(user: currentUser) { (posts) in
             if let postsvar = posts {
@@ -79,8 +61,8 @@ class PostsTableViewController: UIViewController, UITableViewDelegate, UITableVi
                     addPostToThread(post: x)
                     getDataFromPath(path: x.postImagePath, completion: { (data) in
                         if let imagedata = data {
-//                            let image = UIImage(data: imagedata)
-                            self.loadedImagesById[x.postId] = UIImage(data: imagedata)
+                            let img = UIImage(data: imagedata)
+                            self.loadedImagesById[x.postId] = img
                         }
                     })
                 }
@@ -152,14 +134,10 @@ class PostsTableViewController: UIViewController, UITableViewDelegate, UITableVi
         return threads[threadName]!.count
     }
     
-    
-    // TODO: add the selected post as one of the current user's read posts
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let post = getPostFromIndexPath(indexPath: indexPath), !post.read {
             presentPostImage(forPost: post)
             post.read = true
-            
-            // YOUR CODE HERE
             currentUser.addNewReadPost(postID: post.postId)
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
