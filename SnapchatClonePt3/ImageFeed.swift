@@ -115,10 +115,10 @@ func getPosts(user: CurrentUser, completion: @escaping ([Post]?) -> Void) {
             let values = snapshot.value as? [String: AnyObject]
             user.getReadPostIDs(completion: { (readPosts) in
                 for (key, val) in values! {
-                    var username = ""
-                    var imagePath = ""
-                    var thread = ""
-                    var date = ""
+                    var username : String?
+                    var imagePath : String?
+                    var thread : String?
+                    var date : String?
                     let read = readPosts.contains(key)
                     if let uservalue = val.value(forKey: "username") as? String {
                         username = uservalue
@@ -132,11 +132,11 @@ func getPosts(user: CurrentUser, completion: @escaping ([Post]?) -> Void) {
                     if let datevalue = val.value(forKey: "date") as? String {
                         date = datevalue
                     }
-                    let newPost = Post(id: key, username: username, postImagePath: imagePath, thread: thread, dateString: date, read: read)
+                    let newPost = Post(id: key, username: username!, postImagePath: imagePath!, thread: thread!, dateString: date!, read: read)
                     postArray.append(newPost)
                 }
                 completion(postArray)
-                print("completed")
+//                print("completed")
             })
         }
         else {
